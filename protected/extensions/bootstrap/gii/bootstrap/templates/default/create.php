@@ -10,15 +10,11 @@ $label=$this->pluralize($this->class2name($this->modelClass));
 echo "\$this->breadcrumbs=array(
 	'$label'=>array('index'),
 	'Create',
-);\n";
+);\n
+?>";
 ?>
+ 
 
-$this->menu=array(
-	array('label'=>'List <?php echo $this->modelClass; ?>','url'=>array('index')),
-	array('label'=>'Manage <?php echo $this->modelClass; ?>','url'=>array('admin')),
-);
-?>
-
-<h1>Create <?php echo $this->modelClass; ?></h1>
+<h2>创建 <?php echo $this->modelClass; ?> 项目</h2>
 
 <?php echo "<?php echo \$this->renderPartial('_form', array('model'=>\$model)); ?>"; ?>
