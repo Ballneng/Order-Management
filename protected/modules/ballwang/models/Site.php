@@ -40,10 +40,9 @@ class Site extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('site_name, site_prefix, site_db_host, site_db_name, site_db_password, site_attribute_id', 'required','message'=>'{attribute}不能为空！'),
-			array('site_attribute_id', 'numerical', 'integerOnly'=>true,'message'=>'{attribute}必须是数字！'),
-			array('site_name, site_prefix, site_db_name, site_db_password', 'length', 'max'=>255),
-			array('site_db_host', 'length', 'max'=>50),
+			array('site_name, site_prefix, site_db_host, site_db_name, site_db_password, site_attribute_id', 'required','message'=>'{attribute}内容不能为空！'),
+			array('site_attribute_id', 'numerical', 'integerOnly'=>true),
+			array('site_name, site_prefix, site_db_host, site_db_name, site_db_password', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('site_id, site_name, site_prefix, site_db_host, site_db_name, site_db_password, site_attribute_id', 'safe', 'on'=>'search'),
@@ -68,10 +67,10 @@ class Site extends CActiveRecord
 	{
 		return array(
 			'site_id' => '网站ID',
-			'site_name' => '网站名称',
+			'site_name' => '站点名称',
 			'site_prefix' => '网站代码',
 			'site_db_host' => '数据库地址',
-			'site_db_name' => '数据库名称',
+			'site_db_name' => '数据库帐号',
 			'site_db_password' => '数据库密码',
 			'site_attribute_id' => '网站类型',
 		);

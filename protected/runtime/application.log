@@ -2181,3 +2181,256 @@ Stack trace:
 #3 {main}
 REQUEST_URI=/favicon.ico
 ---
+2012/05/27 03:50:14 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection: SQLSTATE[42000] [1049] Unknown database 'ui'' in E:\xampp\htdocs\ui\framework\db\CDbConnection.php:382
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(331): CDbConnection->open()
+#1 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(309): CDbConnection->setActive(true)
+#2 E:\xampp\htdocs\ui\framework\base\CModule.php(388): CDbConnection->init()
+#3 E:\xampp\htdocs\ui\framework\base\CApplication.php(431): CModule->getComponent('db')
+#4 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(615): CApplication->getDb()
+#5 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(2263): CActiveRecord->getDbConnection()
+#6 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(379): CActiveRecordMetaData->__construct(Object(Site))
+#7 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(394): CActiveRecord::model('Site')
+#8 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(78): CActiveRecord->getMetaData()
+#9 E:\xampp\htdocs\ui\protected\modules\ballwang\controllers\SiteController.php(63): CActiveRecord->__construct()
+#10 E:\xampp\htdocs\ui\framework\web\actions\CInlineAction.php(50): SiteController->actionCreate()
+#11 E:\xampp\htdocs\ui\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#12 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#13 E:\xampp\htdocs\ui\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#14 E:\xampp\htdocs\ui\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#15 E:\xampp\htdocs\ui\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#16 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 E:\xampp\htdocs\ui\framework\web\CController.php(292): CFilterChain->run()
+#18 E:\xampp\htdocs\ui\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(276): CController->run('create')
+#20 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('ballwang/site/c...')
+#21 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#22 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/ballwang/site/create
+HTTP_REFERER=http://www.ui.com/site/login
+---
+2012/05/27 03:56:42 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection: SQLSTATE[42000] [1049] Unknown database 'ui'' in E:\xampp\htdocs\ui\framework\db\CDbConnection.php:382
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(331): CDbConnection->open()
+#1 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(309): CDbConnection->setActive(true)
+#2 E:\xampp\htdocs\ui\framework\base\CModule.php(388): CDbConnection->init()
+#3 E:\xampp\htdocs\ui\framework\base\CApplication.php(431): CModule->getComponent('db')
+#4 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(615): CApplication->getDb()
+#5 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(2263): CActiveRecord->getDbConnection()
+#6 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(379): CActiveRecordMetaData->__construct(Object(Site))
+#7 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(394): CActiveRecord::model('Site')
+#8 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(78): CActiveRecord->getMetaData()
+#9 E:\xampp\htdocs\ui\protected\modules\ballwang\controllers\SiteController.php(63): CActiveRecord->__construct()
+#10 E:\xampp\htdocs\ui\framework\web\actions\CInlineAction.php(50): SiteController->actionCreate()
+#11 E:\xampp\htdocs\ui\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#12 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#13 E:\xampp\htdocs\ui\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#14 E:\xampp\htdocs\ui\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#15 E:\xampp\htdocs\ui\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#16 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 E:\xampp\htdocs\ui\framework\web\CController.php(292): CFilterChain->run()
+#18 E:\xampp\htdocs\ui\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(276): CController->run('create')
+#20 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('ballwang/site/c...')
+#21 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#22 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/ballwang/site/create
+---
+2012/05/27 03:57:32 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection: SQLSTATE[42000] [1049] Unknown database 'ui'' in E:\xampp\htdocs\ui\framework\db\CDbConnection.php:382
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(331): CDbConnection->open()
+#1 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(309): CDbConnection->setActive(true)
+#2 E:\xampp\htdocs\ui\framework\base\CModule.php(388): CDbConnection->init()
+#3 E:\xampp\htdocs\ui\framework\base\CApplication.php(431): CModule->getComponent('db')
+#4 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(615): CApplication->getDb()
+#5 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(2263): CActiveRecord->getDbConnection()
+#6 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(379): CActiveRecordMetaData->__construct(Object(Site))
+#7 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(394): CActiveRecord::model('Site')
+#8 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(78): CActiveRecord->getMetaData()
+#9 E:\xampp\htdocs\ui\protected\modules\ballwang\controllers\SiteController.php(63): CActiveRecord->__construct()
+#10 E:\xampp\htdocs\ui\framework\web\actions\CInlineAction.php(50): SiteController->actionCreate()
+#11 E:\xampp\htdocs\ui\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#12 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#13 E:\xampp\htdocs\ui\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#14 E:\xampp\htdocs\ui\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#15 E:\xampp\htdocs\ui\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#16 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 E:\xampp\htdocs\ui\framework\web\CController.php(292): CFilterChain->run()
+#18 E:\xampp\htdocs\ui\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(276): CController->run('create')
+#20 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('ballwang/site/c...')
+#21 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#22 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/ballwang/site/create
+---
+2012/05/27 03:57:34 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection: SQLSTATE[42000] [1049] Unknown database 'ui'' in E:\xampp\htdocs\ui\framework\db\CDbConnection.php:382
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(331): CDbConnection->open()
+#1 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(309): CDbConnection->setActive(true)
+#2 E:\xampp\htdocs\ui\framework\base\CModule.php(388): CDbConnection->init()
+#3 E:\xampp\htdocs\ui\framework\base\CApplication.php(431): CModule->getComponent('db')
+#4 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(615): CApplication->getDb()
+#5 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(2263): CActiveRecord->getDbConnection()
+#6 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(379): CActiveRecordMetaData->__construct(Object(Site))
+#7 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(394): CActiveRecord::model('Site')
+#8 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(78): CActiveRecord->getMetaData()
+#9 E:\xampp\htdocs\ui\protected\modules\ballwang\controllers\SiteController.php(63): CActiveRecord->__construct()
+#10 E:\xampp\htdocs\ui\framework\web\actions\CInlineAction.php(50): SiteController->actionCreate()
+#11 E:\xampp\htdocs\ui\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#12 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#13 E:\xampp\htdocs\ui\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#14 E:\xampp\htdocs\ui\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#15 E:\xampp\htdocs\ui\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#16 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 E:\xampp\htdocs\ui\framework\web\CController.php(292): CFilterChain->run()
+#18 E:\xampp\htdocs\ui\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(276): CController->run('create')
+#20 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('ballwang/site/c...')
+#21 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#22 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/ballwang/site/create
+---
+2012/05/27 03:57:44 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection: SQLSTATE[42000] [1049] Unknown database 'ui'' in E:\xampp\htdocs\ui\framework\db\CDbConnection.php:382
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(331): CDbConnection->open()
+#1 E:\xampp\htdocs\ui\framework\db\CDbConnection.php(309): CDbConnection->setActive(true)
+#2 E:\xampp\htdocs\ui\framework\base\CModule.php(388): CDbConnection->init()
+#3 E:\xampp\htdocs\ui\framework\base\CApplication.php(431): CModule->getComponent('db')
+#4 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(615): CApplication->getDb()
+#5 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(2263): CActiveRecord->getDbConnection()
+#6 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(379): CActiveRecordMetaData->__construct(Object(Site))
+#7 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(394): CActiveRecord::model('Site')
+#8 E:\xampp\htdocs\ui\framework\db\ar\CActiveRecord.php(78): CActiveRecord->getMetaData()
+#9 E:\xampp\htdocs\ui\protected\modules\ballwang\controllers\SiteController.php(63): CActiveRecord->__construct()
+#10 E:\xampp\htdocs\ui\framework\web\actions\CInlineAction.php(50): SiteController->actionCreate()
+#11 E:\xampp\htdocs\ui\framework\web\CController.php(309): CInlineAction->runWithParams(Array)
+#12 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(134): CController->runAction(Object(CInlineAction))
+#13 E:\xampp\htdocs\ui\framework\web\filters\CFilter.php(41): CFilterChain->run()
+#14 E:\xampp\htdocs\ui\framework\web\CController.php(1146): CFilter->filter(Object(CFilterChain))
+#15 E:\xampp\htdocs\ui\framework\web\filters\CInlineFilter.php(59): CController->filterAccessControl(Object(CFilterChain))
+#16 E:\xampp\htdocs\ui\framework\web\filters\CFilterChain.php(131): CInlineFilter->filter(Object(CFilterChain))
+#17 E:\xampp\htdocs\ui\framework\web\CController.php(292): CFilterChain->run()
+#18 E:\xampp\htdocs\ui\framework\web\CController.php(266): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(276): CController->run('create')
+#20 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('ballwang/site/c...')
+#21 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#22 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#23 {main}
+REQUEST_URI=/ballwang/site/create
+---
+2012/05/27 04:43:36 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:45:01 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:45:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:46:18 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:46:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:48:00 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:48:31 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:50:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:50:58 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:51:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:52:50 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:56:13 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 04:56:17 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2012/05/27 05:04:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in E:\xampp\htdocs\ui\framework\web\CWebApplication.php:280
+Stack trace:
+#0 E:\xampp\htdocs\ui\framework\web\CWebApplication.php(135): CWebApplication->runController('favicon.ico')
+#1 E:\xampp\htdocs\ui\framework\base\CApplication.php(162): CWebApplication->processRequest()
+#2 E:\xampp\htdocs\ui\index.php(13): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---

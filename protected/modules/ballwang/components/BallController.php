@@ -15,7 +15,7 @@ class BallController extends CController {
      */
     public $menu = array(
         array('label' => '菜单栏操作项目'),
-        array('label' => '列表查看', 'icon' => 'user', 'url' => array('create')),
+        array('label' => '创建项目', 'icon' => 'user', 'url' => array('create')),
         array('label' => '管理操作', 'icon' => 'flag', 'url' => array('admin')),
         array('label' => 'ANOTHER LIST HEADER'),
          
