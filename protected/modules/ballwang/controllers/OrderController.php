@@ -25,7 +25,7 @@ class OrderController extends BallController {
     public function accessRules() {
         return array(
             array('allow', // allow all users to perform 'index' and 'view' actions
-                'actions' => array('index', 'view'),
+                'actions' => array('index', 'view', 'SynOrder'),
                 'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -137,11 +137,14 @@ class OrderController extends BallController {
         ));
     }
 
+    /**
+     * 
+     */
     public function actionSynOrder() {
         $allDb = $this->getDbOrderConnection();
         if ($allDb['all']) {
             foreach ($allDb['all'] as $key => $value) {
-                
+                $this->getOrder($value);
             }
         }
     }
@@ -184,9 +187,29 @@ class OrderController extends BallController {
     }
 
     protected function getOrder($db) {
-        $dbConnect = mysql_connect($db->site_db_host, $db->site_db_name, $db->site_db_password);
+        $dbConnectString = '';
+        $row='';
+        //  $dbConnect = mysql_connect($db->site_db_host, $db->site_db_name, $db->site_db_password);
+        $dbConnect = mysql_connect("localhost", "root", "");
         if (!$dbConnect) {
-            die('Could not connect: ' . mysql_error());
+            $dbConnectString .= $db->site_db_name . 'connect failed!';
+        } else {
+            mysql_select_db('ui', $dbConnect) or die('Query interrupted' . mysql_error());
+            mysql_query("SET NAME 'UTF8'");
+            $sql = "select t1.*,t2.*,t3.customer_email,t4.carrier_name,t5.response_txn_id
+                from syo_order AS t1
+                LEFT JOIN  syo_customer_address  AS t2 ON t1.order_address_id=t2.address_id
+                LEFT JOIN syo_customer AS t3 ON t1.customer_id=t3.customer_id
+                LEFT JOIN syo_carrier AS t4 ON t1.order_carrier_id=t4.carrier_id
+                LEFT JOIN syo_paypal_response AS t5 ON t1.order_id=t5.order_id
+                WHERE t1.order_valid=1 AND  (t1.order_status=" . Order::PaymentAccepted . " OR t1.order_status=" . Order::AwaitingPayment . " ) AND t1.order_export=0
+                ORDER BY order_payment_at ASC";
+            $query = mysql_query($sql);
+            while($row = mysql_fetch_array($query)){
+                
+            }
+
+            echo $dbConnectString . '######';
         }
         
         mysql_close($dbConnect);

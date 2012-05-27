@@ -36,7 +36,7 @@
                                         '---',
                                         array('label' => '订单及时操作'),
                                         array('label' => '订单导出','icon'=>'eye-open', 'url' => '#'),
-                                        array('label' => '订单同步','icon'=>'refresh', 'url' => '#'),
+                                        array('label' => '订单同步','icon'=>'refresh', 'url' => '/ballwang/order/SynOrder'),
                                 ), 'active' => true),
                                 array('label' => '网站管理', 'url' => '#', 'items' => array(
                                         array('label' => 'PRE HEADER'),
