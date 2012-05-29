@@ -131,35 +131,35 @@ class Customer extends CActiveRecord {
         ));
     }
 
-    public function beforeValidate() {
-        if ($this->isNewRecord) {
-            $this->customer_pwd = hashPwd($this->customer_pwd);
-            $this->customer_role = Lookup::CUSTOMER_ROLE_USER;
-            $this->customer_name = substr($this->customer_email, 0, strpos($this->customer_email, '@'));
-            $this->customer_active = 1;
-            $this->customer_group = CustomerGroup::CUSTOMER_DEFAULT_GROUP;
-            $this->customer_default_address = 0;
-            $this->customer_last_update = $this->customer_create_at = date('Y-m-j H:i:s');
-        }
-        return true;
-    }
+//    public function beforeValidate() {
+//        if ($this->isNewRecord) {
+//            $this->customer_pwd = hashPwd($this->customer_pwd);
+//            $this->customer_role = Lookup::CUSTOMER_ROLE_USER;
+//            $this->customer_name = substr($this->customer_email, 0, strpos($this->customer_email, '@'));
+//            $this->customer_active = 1;
+//            $this->customer_group = CustomerGroup::CUSTOMER_DEFAULT_GROUP;
+//            $this->customer_default_address = 0;
+//            $this->customer_last_update = $this->customer_create_at = date('Y-m-j H:i:s');
+//        }
+//        return true;
+//    }
 
-    public function afterSave() {
-        if ($this->isNewRecord) {
-            //发送邮件
-            $mail = new SyoSendEmail();
-            $data = array(
-                'hostUrl' => Yii::app()->request->hostInfo,
-                'hostName' => Yii::app()->request->serverName,
-                'name' => $this->customer_name,
-                'email' => $this->customer_email,
-                'subject' => 'Welcome to our store',
-                'view' => 'register',
-            );
-            $mail->sendByRegister($data);
-        }
-        return true;
-    }
+//    public function afterSave() {
+//        if ($this->isNewRecord) {
+//            //发送邮件
+//            $mail = new SyoSendEmail();
+//            $data = array(
+//                'hostUrl' => Yii::app()->request->hostInfo,
+//                'hostName' => Yii::app()->request->serverName,
+//                'name' => $this->customer_name,
+//                'email' => $this->customer_email,
+//                'subject' => 'Welcome to our store',
+//                'view' => 'register',
+//            );
+//            $mail->sendByRegister($data);
+//        }
+//        return true;
+//    }
 
     public function resetPassword() {
         $reset = new ResetPassword();

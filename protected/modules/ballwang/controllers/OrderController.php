@@ -190,13 +190,14 @@ class OrderController extends BallController {
         $dbConnectString = '';
         $row = '';
         $dbConnect = mysql_connect($db->site_db_host, $db->site_db_name, $db->site_db_password);
-
+        // $dbConnect = mysql_connect('localhost', 'root', '');
         if (!$dbConnect) {
             $dbConnectString .= $db->site_db_name . 'connect failed!';
         } else {
             mysql_select_db($db->site_db_name, $dbConnect) or die('Query interrupted' . mysql_error());
-            mysql_query("SET NAME 'UTF8'");
-            $sql = "select t1.*,t2.*,t3.*,t4.carrier_name,t4.carrier_id,t5.response_txn_id
+            // mysql_select_db('lv003', $dbConnect) or die('Query interrupted' . mysql_error());
+             
+            $sql = "select t1.*,t2.*,t3.*,t4.carrier_name,t4.carrier_id,t5.response_txn_id 
                 from syo_order AS t1
                 LEFT JOIN  syo_customer_address  AS t2 ON t1.order_address_id=t2.address_id
                 LEFT JOIN syo_customer AS t3 ON t1.customer_id=t3.customer_id
@@ -206,10 +207,8 @@ class OrderController extends BallController {
                 ORDER BY order_payment_at ASC";
             $query = mysql_query($sql);
             while ($row = mysql_fetch_array($query)) {
-                var_dump($row['address_city']);
-                echo '<br></br>';
+                $this->synOrderListUpdate($row, $db);
             }
-            echo $dbConnectString . '######';
         }
 
         mysql_close($dbConnect);
@@ -226,46 +225,85 @@ class OrderController extends BallController {
 
     protected function synOrderListUpdate($row, $db) {
         $error = '';
-        $success ='';
+        $success = '';
+        $isNew = 1;
         $isOrder = Order::model()->findByAttributes(array('order_site_id' => $db->site_id, 'invoice_id' => $row['invoice_id']));
         if ($isOrder) {
             $order = $isOrder;
+            $order->order_status = $row['order_status'];
+            $order->order_valid = $row['order_valid'];
+            $order->order_export = $row['order_export'];
+            $order->order_create_at = $row['order_create_at'];
+            if ($order->update()) {
+                
+            }
         } else {
             $order = new Order();
-        }
-        $order->order_site_id = $db->site_id;
-        $order->invoice_id = $row['invoice_id'];
-        $custmerId = (int) $row['customer_id'];
-
-        $userAndAddress=  $this->setUser($row, $db);
-        $order->customer_id = $userAndAddress['userId'];                                //change
-        $order->order_subtotal = $row['order_subtotal'];
-        $order->order_trackingtotal = $row['order_trackingtotal'];
-        $order->order_promo_free = $row['order_promo_free'];
-        $order->order_grandtotal = $row['order_grandtotal'];
-        $order->order_discount_id = $row['order_discount_id'];
-        $order->order_currency_id = $row['order_currency_id'];
-        $order->order_currency_id = $row['order_currency_id'];
-        $order->order_carrier_id = $row['order_carrier_id'];                      //change
-        $order->order_address_id = $userAndAddress['addressId'];                      //change
-        $order->order_status = $row['order_status'];
-        $order->order_valid = $row['order_valid'];
-        $order->order_export = $row['order_export'];
-        $order->order_qty = $row['order_qty'];
-        $order->order_ip = $row['order_ip'];
-        $order->order_salt = $row['order_salt'];
-        $order->order_comment = $row['order_comment'];
-        $order->order_create_at = $row['order_create_at'];
-        $order->order_payment_at = $row['order_payment_at'];
-        if ($order->save()) {
-            
-        } else {
-            $error .=$db->site_prefix . $row['invoice_id'] . '订单同步失败！';
+            $order->order_site_id = $db->site_id;
+            $order->invoice_id = $row['invoice_id'];
+            $custmerId = (int) $row['customer_id'];
+            $userAndAddress = $this->setUser($row, $db);
+            $order->customer_id = $userAndAddress['userId'];                                //change
+            $order->order_subtotal = $row['order_subtotal'];
+            $order->order_trackingtotal = $row['order_trackingtotal'];
+            $order->order_promo_free = $row['order_promo_free'];
+            $order->order_grandtotal = $row['order_grandtotal'];
+            $order->order_discount_id = $row['order_discount_id'];
+            $order->order_currency_id = $row['order_currency_id'];
+            $order->order_carrier_id = $row['order_carrier_id'];                      //change
+            $order->order_address_id = $userAndAddress['addressId'];                      //change
+            $order->order_status = $row['order_status'];
+            $order->order_valid = $row['order_valid'];
+            $order->order_export = $row['order_export'];
+            $order->order_qty = $row['order_qty'];
+            $order->order_ip = $row['order_ip'];
+            $order->order_salt = $row['order_salt'];
+            $order->order_comment = $row['order_comment'];
+            $order->order_create_at = $row['order_create_at'];
+            $order->order_payment_at = $row['order_payment_at'];
+            if ($order->save()) {
+                $sqlItem = "SELECT t1.*,t2.product_name,t2.product_sku,t3.* FROM {{order_item}} as t1
+                        LEFT JOIN {{product}} as t2 ON t1.item_product_id=t2.product_id
+                        LEFT JOIN syo_order_attribute as t3 ON t1.item_attribute_id=t3.order_attribute_id
+                        where t1.order_id={$row['order_id']}";
+                $queryItem = mysql_query($sqlItem);
+                while ($rowItem = mysql_fetch_array($queryItem)) {
+                    //同步属性
+                    $orderAttribute = OrderAttribute::model()->findByAttributes(array('order_attribute_size' => $rowItem['order_attribute_size'], 'order_attribute_color' => $rowItem['order_attribute_color']));
+                    if (!$orderAttribute) {
+                        $orderAttribute = new OrderAttribute();
+                        $orderAttribute->order_attribute_color = $rowItem['order_attribute_color'];
+                        $orderAttribute->order_attribute_size = $rowItem['order_attribute_size'];
+                        $orderAttribute->save();
+                    }
+                    //同步订单
+                    $product = ProductCollection::model()->findByAttributes(array('product_sku' => $rowItem['product_sku'], 'product_site_id' => $rowItem['product_site_id']));
+                    if (!$product) {
+                        $product = new Product();
+                        $product->product_name = $row['product_name'];
+                        $product->product_sku = $row['product_sku'];
+                        $product->product_site_id = $row['product_site_id'];
+                        $product->save();
+                    }
+                    $orderItem = new OrderItem();
+                    $orderItem->item_qty = $rowItem['item_qty'];
+                    $orderItem->item_price = $rowItem['item_price'];
+                    $orderItem->item_weight = $rowItem['item_weight'];
+                    $orderItem->item_total = $rowItem['item_total'];
+                    $orderItem->item_attribute_id = $orderAttribute->order_attribute_id;
+                    $orderItem->item_product_id = $product->product_id;
+                    $orderItem->item_product_name = $rowItem['item_product_name'];
+                    $orderItem->order_id = $order->order_id;
+                    $orderItem->save();
+                }
+            } else {
+                $error .=$db->site_prefix . $row['invoice_id'] . '订单同步失败！';
+            }
         }
     }
 
     /**
-     *用户账号和地址信息录入
+     * 用户账号和地址信息录入
      * @param type $row
      * @param type $db
      * @return array() 返回为数组附带用户ID，地址ID，成功信息，失败信息 
@@ -280,8 +318,8 @@ class OrderController extends BallController {
         $user = Customer::model()->findByAttributes(array('customer_email' => $row['customer_email']));
         if ($user) {
             //如有变动则更新
-            $userString = md5($user->customer_name . $user->customer_active . $user->customer_role . $user->customer_default_address . $user->customer_group . $user->customer_visit_count);
-            $rowUserString = md5($row['customer_name'] . $row['customer_active'] . $row['customer_role'] . $row['customer_default_address'] . $row['customer_group'] . $row['customer_visit_count']);
+            $userString = md5($user->customer_name . $user->customer_active . $user->customer_role . $user->customer_default_address . $user->customer_group);
+            $rowUserString = md5($row['customer_name'] . $row['customer_active'] . $row['customer_role'] . $row['customer_default_address'] . $row['customer_group']);
             if ($userString != $rowUserString) {
                 $user->customer_name = $row['customer_name'];
                 $user->customer_active = $row['customer_active'];
@@ -295,18 +333,38 @@ class OrderController extends BallController {
             }
             //检查地址是否存在
             $address = $user->address;
+             $isAddressExist = 0;
             foreach ($address as $key => $value) {
-                if ($value->customer_firstname == $row['customer_firstname'] && $value->customer_lastname == $row['customer_lastname'] && $value->customer_name == $row['customer_name'] && $value->address_street == $row['address_street'] && $value->address_city == $row['address_city'] && $value->address_state == $row['address_state'] && $value->address_country == $row['address_country']) {
+                $addressString=$value->customer_firstname.$value->customer_lastname.$value->address_street.'##'.$value->address_city. $value->address_state ;
+                $rowString= $row['customer_firstname'].$row['customer_lastname'].$row['address_street'].'##'.$row['address_city'].$row['address_state'] ;
+                echo trim($row['address_street']).'<br>';
+                
+                if (md5($addressString)==md5($rowString)) {
                     $addressReturnId = $value->address_id;
                     $isAddressExist = 1;
+                }  else {
+                    echo $value->customer_name.'<br>';
+                echo $row['customer_name'].'<br>';
+                echo $addressString.'<Br>';
+                echo $rowString.'<br>';
+                echo '@@@@@@@@####<br>';
+                echo md5($addressString);
+                echo '<br>';
+                echo md5($rowString);
+                echo '<br>';
                 }
             }
+            
+            
+            
             if (!$isAddressExist) {
+                echo '###########'.$row['customer_name'].'<br>';
                 $address = new CustomerAddress();
                 $address->customer_id = $user->customer_id;
                 $address->customer_gender = $row['customer_gender'];
                 $address->customer_firstname = $row['customer_firstname'];
                 $address->customer_lastname = $row['customer_lastname'];
+                $address->customer_name = $row['customer_name'];
                 $address->address_company = $row['address_company'];
                 $address->address_street = $row['address_street'];
                 $address->address_city = $row['address_city'];
