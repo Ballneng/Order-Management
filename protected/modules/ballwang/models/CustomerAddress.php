@@ -132,6 +132,11 @@ class CustomerAddress extends CActiveRecord {
         ));
     }
 
+    public function beforeSave() {
+        $this->customer_name = $this->customer_firstname . ' ' . $this->customer_lastname;
+        return true;
+    }
+
     public static function getGender($id=0) {
         $gender = array(1 => 'Mr', 2 => 'Miss', 3 => 'Mrs', 4 => 'Ms');
         return $id == 0 ? $gender[1] : $gender[$id];

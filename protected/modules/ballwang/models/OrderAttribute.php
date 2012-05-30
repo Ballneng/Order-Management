@@ -36,7 +36,7 @@ class OrderAttribute extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('order_attribute_color, order_attribute_size', 'required'),
+			//array('order_attribute_color, order_attribute_size', 'required'),
 			array('order_attribute_color, order_attribute_size', 'length', 'max'=>25),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.

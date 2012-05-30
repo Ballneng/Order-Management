@@ -196,7 +196,7 @@ class OrderController extends BallController {
         } else {
             mysql_select_db($db->site_db_name, $dbConnect) or die('Query interrupted' . mysql_error());
             // mysql_select_db('lv003', $dbConnect) or die('Query interrupted' . mysql_error());
-             
+
             $sql = "select t1.*,t2.*,t3.*,t4.carrier_name,t4.carrier_id,t5.response_txn_id 
                 from syo_order AS t1
                 LEFT JOIN  syo_customer_address  AS t2 ON t1.order_address_id=t2.address_id
@@ -207,6 +207,7 @@ class OrderController extends BallController {
                 ORDER BY order_payment_at ASC";
             $query = mysql_query($sql);
             while ($row = mysql_fetch_array($query)) {
+
                 $this->synOrderListUpdate($row, $db);
             }
         }
@@ -230,7 +231,8 @@ class OrderController extends BallController {
         $isOrder = Order::model()->findByAttributes(array('order_site_id' => $db->site_id, 'invoice_id' => $row['invoice_id']));
         if ($isOrder) {
             $order = $isOrder;
-            $order->order_status = $row['order_status'];
+            $custmerId = (int) $row['customer_id'];
+
             $order->order_valid = $row['order_valid'];
             $order->order_export = $row['order_export'];
             $order->order_create_at = $row['order_create_at'];
@@ -248,10 +250,12 @@ class OrderController extends BallController {
             $order->order_trackingtotal = $row['order_trackingtotal'];
             $order->order_promo_free = $row['order_promo_free'];
             $order->order_grandtotal = $row['order_grandtotal'];
-            $order->order_discount_id = $row['order_discount_id'];
             $order->order_currency_id = $row['order_currency_id'];
+            $order->order_payment_id = $row['order_payment_id'];
             $order->order_carrier_id = $row['order_carrier_id'];                      //change
             $order->order_address_id = $userAndAddress['addressId'];                      //change
+            $order->order_ship_id = $row['order_ship_id'];
+            $order->order_discount_id = $row['order_discount_id'];
             $order->order_status = $row['order_status'];
             $order->order_valid = $row['order_valid'];
             $order->order_export = $row['order_export'];
@@ -262,28 +266,39 @@ class OrderController extends BallController {
             $order->order_create_at = $row['order_create_at'];
             $order->order_payment_at = $row['order_payment_at'];
             if ($order->save()) {
-                $sqlItem = "SELECT t1.*,t2.product_name,t2.product_sku,t3.* FROM {{order_item}} as t1
-                        LEFT JOIN {{product}} as t2 ON t1.item_product_id=t2.product_id
+                $sqlItem = "SELECT t1.*,t2.product_name,t2.product_sku,t3.* FROM syo_order_item as t1
+                        LEFT JOIN syo_product as t2 ON t1.item_product_id=t2.product_id
                         LEFT JOIN syo_order_attribute as t3 ON t1.item_attribute_id=t3.order_attribute_id
                         where t1.order_id={$row['order_id']}";
+
                 $queryItem = mysql_query($sqlItem);
-                while ($rowItem = mysql_fetch_array($queryItem)) {
+                while ($rowItem = @mysql_fetch_array($queryItem)) {
                     //同步属性
-                    $orderAttribute = OrderAttribute::model()->findByAttributes(array('order_attribute_size' => $rowItem['order_attribute_size'], 'order_attribute_color' => $rowItem['order_attribute_color']));
-                    if (!$orderAttribute) {
-                        $orderAttribute = new OrderAttribute();
-                        $orderAttribute->order_attribute_color = $rowItem['order_attribute_color'];
-                        $orderAttribute->order_attribute_size = $rowItem['order_attribute_size'];
-                        $orderAttribute->save();
+                    if ($rowItem['order_attribute_color'] || $rowItem['order_attribute_size']) {
+                        $orderAttribute = OrderAttribute::model()->findByAttributes(array('order_attribute_size' => $rowItem['order_attribute_size'], 'order_attribute_color' => $rowItem['order_attribute_color']));
+                        if (!$orderAttribute) {
+                            $orderAttribute = new OrderAttribute();
+                            $orderAttribute->order_attribute_color = $rowItem['order_attribute_color'];
+                            $orderAttribute->order_attribute_size = $rowItem['order_attribute_size'];
+                            if ($orderAttribute->save()) {
+                                
+                            } else {
+                                var_dump($orderAttribute->errors);
+                            }
+                        }
                     }
                     //同步订单
                     $product = ProductCollection::model()->findByAttributes(array('product_sku' => $rowItem['product_sku'], 'product_site_id' => $rowItem['product_site_id']));
                     if (!$product) {
-                        $product = new Product();
-                        $product->product_name = $row['product_name'];
-                        $product->product_sku = $row['product_sku'];
-                        $product->product_site_id = $row['product_site_id'];
-                        $product->save();
+                        $product = new ProductCollection();
+                        $product->product_name = $rowItem['product_name'];
+                        $product->product_sku = $rowItem['product_sku'];
+                        $product->product_site_id = $rowItem['product_site_id'];
+                        if ($product->save()) {
+                            
+                        } else {
+                            var_dump($product->errors);
+                        }
                     }
                     $orderItem = new OrderItem();
                     $orderItem->item_qty = $rowItem['item_qty'];
@@ -297,7 +312,7 @@ class OrderController extends BallController {
                     $orderItem->save();
                 }
             } else {
-                $error .=$db->site_prefix . $row['invoice_id'] . '订单同步失败！';
+                $error .=$db->site_prefix . $row['invoice_id'] . '订单同步失败！<br>';
             }
         }
     }
@@ -321,50 +336,32 @@ class OrderController extends BallController {
             $userString = md5($user->customer_name . $user->customer_active . $user->customer_role . $user->customer_default_address . $user->customer_group);
             $rowUserString = md5($row['customer_name'] . $row['customer_active'] . $row['customer_role'] . $row['customer_default_address'] . $row['customer_group']);
             if ($userString != $rowUserString) {
-                $user->customer_name = $row['customer_name'];
                 $user->customer_active = $row['customer_active'];
                 $user->customer_role = $row['customer_role'];
                 $user->customer_default_address = $row['customer_default_address'];
                 $user->customer_group = $row['customer_group'];
                 $user->customer_visit_count = $row['customer_visit_count'];
-                if ($user->update()) {
-                    $success .= $db->site_prefix . $user->customer_name . '用户信息更新成功！';
-                }
+                $user->save();
             }
+            $userId = $user->customer_id;
             //检查地址是否存在
             $address = $user->address;
-             $isAddressExist = 0;
+            $isAddressExist = 0;
             foreach ($address as $key => $value) {
-                $addressString=$value->customer_firstname.$value->customer_lastname.$value->address_street.'##'.$value->address_city. $value->address_state ;
-                $rowString= $row['customer_firstname'].$row['customer_lastname'].$row['address_street'].'##'.$row['address_city'].$row['address_state'] ;
-                echo trim($row['address_street']).'<br>';
-                
-                if (md5($addressString)==md5($rowString)) {
+                $addressString = $value->address_create_at;
+                $rowString = $row['address_create_at'];
+
+                if (md5($addressString) == md5($rowString)) {
                     $addressReturnId = $value->address_id;
                     $isAddressExist = 1;
-                }  else {
-                    echo $value->customer_name.'<br>';
-                echo $row['customer_name'].'<br>';
-                echo $addressString.'<Br>';
-                echo $rowString.'<br>';
-                echo '@@@@@@@@####<br>';
-                echo md5($addressString);
-                echo '<br>';
-                echo md5($rowString);
-                echo '<br>';
                 }
             }
-            
-            
-            
             if (!$isAddressExist) {
-                echo '###########'.$row['customer_name'].'<br>';
                 $address = new CustomerAddress();
                 $address->customer_id = $user->customer_id;
                 $address->customer_gender = $row['customer_gender'];
                 $address->customer_firstname = $row['customer_firstname'];
                 $address->customer_lastname = $row['customer_lastname'];
-                $address->customer_name = $row['customer_name'];
                 $address->address_company = $row['address_company'];
                 $address->address_street = $row['address_street'];
                 $address->address_city = $row['address_city'];
@@ -413,6 +410,7 @@ class OrderController extends BallController {
                 } else {
                     $error .=$db->site_prefix . $row['customer_name'] . ' 地址保存失败！<br>';
                 }
+                $userId = $user->customer_id;
             } else {
                 $error .= $db->site_prefix . $row['customer_email'] . '账号保存失败！<br>';
             }
