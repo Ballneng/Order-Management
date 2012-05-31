@@ -90,6 +90,7 @@ class Order extends CActiveRecord {
             'address' => array(self::BELONGS_TO, 'CustomerAddress', 'order_address_id'),
             'paypal' => array(self::HAS_ONE, 'PaypalResponse', 'order_id'),
             'ship' => array(self::HAS_ONE, 'OrderShip', 'ship_order_id'),
+            'site'=>array(self::BELONGS_TO,'Site','order_site_id'),
         );
     }
 
@@ -98,25 +99,26 @@ class Order extends CActiveRecord {
      */
     public function attributeLabels() {
         return array(
-            'order_id' => 'Order',
-            'invoice_id' => 'Invoice',
-            'customer_id' => 'Customer',
-            'order_subtotal' => 'Order Subtotal',
+            'order_id' => '订单ID',
+            'invoice_id' => '订单号',
+            'order_site_id' => '网站代码',
+            'customer_id' => '客户邮箱',
+            'order_subtotal' => '订单小计',
             'order_trackingtotal' => 'Order TrackingTotal',
-            'order_grandtotal' => 'Order Grandtotal',
-            'order_currency_id' => 'Order Currency',
-            'order_payment_id' => 'Order Payment',
-            'order_carrier_id' => 'Order Carrier',
-            'order_address_id' => 'Order Address',
+            'order_grandtotal' => '订单总计',
+            'order_currency_id' => '货币',
+            'order_payment_id' => '支付方式',
+            'order_carrier_id' => '货运方式',
+            'order_address_id' => '货运地址',
             'order_ship_id' => 'Order Ship',
             'order_discount_id' => 'Order Discount',
-            'order_status' => 'Order Status',
-            'order_qty' => 'Order Qty',
+            'order_status' => '订单状态',
+            'order_qty' => '订单数量',
             'order_ip' => 'Order Ip',
             'order_salt' => 'Order Salt',
-            'order_comment' => 'Order Comment',
-            'order_create_at' => 'Order Create At',
-            'order_payment_at' => 'Order Payment At'
+            'order_comment' => '客户留言',
+            'order_create_at' => '下单时间',
+            'order_payment_at' => '支付时间'
         );
     }
 
@@ -185,6 +187,9 @@ class Order extends CActiveRecord {
 
         return new CActiveDataProvider('Order', array(
             'criteria' => $criteria,
+            'pagination' => array(
+                'pageSize' => 30,
+            ),
         ));
     }
 
@@ -243,7 +248,7 @@ class Order extends CActiveRecord {
     }
 
     public function getInvoice() {
-        $prefix = Config::item('system', 'order_export_prefix');
+        $prefix = $this->site->site_prefix;
         if ($this->customer->group->group_name == 'Warning') {
             $prefix = '(警告)';
         }

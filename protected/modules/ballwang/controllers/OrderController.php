@@ -104,7 +104,7 @@ class OrderController extends BallController {
         if (Yii::app()->request->isPostRequest) {
             // we only allow deletion via POST request
             $this->loadModel($id)->delete();
-
+            
             // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
             if (!isset($_GET['ajax']))
                 $this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
@@ -112,7 +112,7 @@ class OrderController extends BallController {
         else
             throw new CHttpException(400, 'Invalid request. Please do not repeat this request again.');
     }
-
+    
     /**
      * Lists all models.
      */
@@ -147,6 +147,7 @@ class OrderController extends BallController {
                 $this->getOrder($value);
             }
         }
+        $this->redirect('/ballwang/order/admin');
     }
 
     /**
@@ -207,12 +208,11 @@ class OrderController extends BallController {
                 ORDER BY order_payment_at ASC";
             $query = mysql_query($sql);
             while ($row = mysql_fetch_array($query)) {
-
                 $this->synOrderListUpdate($row, $db);
             }
         }
-
         mysql_close($dbConnect);
+        
     }
 
     /**
@@ -232,7 +232,6 @@ class OrderController extends BallController {
         if ($isOrder) {
             $order = $isOrder;
             $custmerId = (int) $row['customer_id'];
-
             $order->order_valid = $row['order_valid'];
             $order->order_export = $row['order_export'];
             $order->order_create_at = $row['order_create_at'];
@@ -288,17 +287,19 @@ class OrderController extends BallController {
                         }
                     }
                     //同步订单
-                    $product = ProductCollection::model()->findByAttributes(array('product_sku' => $rowItem['product_sku'], 'product_site_id' => $rowItem['product_site_id']));
+                    //$product = ProductCollection::model()->findByAttributes(array('product_sku' => $rowItem['product_sku'], 'product_site_id' => $db->site_id));
+                    $product = ProductCollection::model()->findByAttributes(array('product_sku' => $rowItem['product_sku']));
                     if (!$product) {
                         $product = new ProductCollection();
-                        $product->product_name = $rowItem['product_name'];
-                        $product->product_sku = $rowItem['product_sku'];
-                        $product->product_site_id = $rowItem['product_site_id'];
-                        if ($product->save()) {
-                            
+                        if (!$rowItem['product_name'] || !$rowItem['product_sku']) {
+                            $product->product_name = $rowItem['item_product_name'];       //更新时候可以 item_product_name可以保存SKU
+                            $product->product_sku = $rowItem['item_product_name'];
                         } else {
-                            var_dump($product->errors);
+                            $product->product_name = $rowItem['product_name'];
+                            $product->product_sku = $rowItem['product_sku'];
                         }
+                        $product->product_site_id = $db->site_id;
+                        $product->save();
                     }
                     $orderItem = new OrderItem();
                     $orderItem->item_qty = $rowItem['item_qty'];
@@ -307,7 +308,7 @@ class OrderController extends BallController {
                     $orderItem->item_total = $rowItem['item_total'];
                     $orderItem->item_attribute_id = $orderAttribute->order_attribute_id;
                     $orderItem->item_product_id = $product->product_id;
-                    $orderItem->item_product_name = $rowItem['item_product_name'];
+                    $orderItem->item_product_name = $product->product_sku;
                     $orderItem->order_id = $order->order_id;
                     $orderItem->save();
                 }
