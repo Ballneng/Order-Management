@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This is the model class for table "{{order_history}}".
+ * This is the model class for table "{{OrderHistory}}".
  *
- * The followings are the available columns in table '{{order_history}}':
+ * The followings are the available columns in table '{{OrderHistory}}':
  * @property integer $history_id
  * @property integer $history_employee_id
  * @property integer $history_order_id
@@ -14,7 +14,6 @@ class OrderHistory extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
-	 * @param string $className active record class name.
 	 * @return OrderHistory the static model class
 	 */
 	public static function model($className=__CLASS__)
@@ -38,7 +37,7 @@ class OrderHistory extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('history_employee_id, history_order_id, history_state, history_create', 'required'),
+			array('history_employee_id, history_order_id, history_state', 'required'),
 			array('history_employee_id, history_order_id, history_state', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -54,6 +53,7 @@ class OrderHistory extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+            'order'=>array(self::BELONGS_TO,'Order','history_order_id'),
 		);
 	}
 
@@ -83,13 +83,67 @@ class OrderHistory extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('history_id',$this->history_id);
+
 		$criteria->compare('history_employee_id',$this->history_employee_id);
+
 		$criteria->compare('history_order_id',$this->history_order_id);
+
 		$criteria->compare('history_state',$this->history_state);
+
 		$criteria->compare('history_create',$this->history_create,true);
 
-		return new CActiveDataProvider($this, array(
+		return new CActiveDataProvider('OrderHistory', array(
 			'criteria'=>$criteria,
 		));
 	}
+
+    public function informEmail($customerID)
+    {
+        if ($customerID && $customer = Customer::model()->findByPk($customerID))
+        {
+            switch ($this->history_state)
+            {
+                case Order::Shipped:
+                    $view = 'shipped';
+				    $view = 'shipped';
+                    $ship= OrderShip::model()->findByAttributes(array('ship_order_id'=>$this->history_order_id)); 
+                    $shipArray = array(
+                        'code'=>$ship->ship_code,
+                        'trackUrl'=>$ship->trackUrl($ship->ship_code,$this->order->carrier->carrier_url)
+                        );
+                    
+                    unset($ship);
+                  
+                    break;
+                case Order::PaymentError:
+                    $view = 'payment_error';
+                    break;
+                case Order::Refund:
+                    $view = 'refunded';
+                    break;
+                case Order::Canceled:
+                    $view = 'canceled';
+                    break;
+            }
+            if ($view)
+            {
+                $invoice = $this->order->invoice_id;
+                $subject = "Your Order {$invoice} has been " . Lookup::item('payment_status', $this->history_state);
+                $mail = new SyoSendEmail();
+                $data = array(
+                    'hostUrl' => Yii::app()->request->hostInfo,
+                    'hostName' => Yii::app()->request->serverName,
+                    'name' => $customer->customer_name,
+                    'email' => $customer->customer_email,
+                    'view' => $view,
+                    'order_name'=>$invoice,
+                    'subject' => $subject,
+                );
+				 if($view=='shipped'){
+                    $data=cmap::mergeArray($data, $shipArray);
+                }
+                $mail->sendmixed($data);
+            }
+        }
+    }
 }

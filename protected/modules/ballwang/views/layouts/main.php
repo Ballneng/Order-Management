@@ -30,7 +30,7 @@
                                  
                                 array('label' => '订单管理', 'url' => '#', 'items' => array(
                                         array('label' => '订单常用管理'),
-                                        array('label' => '查看订单','icon'=>'time', 'url' => '/ballwang/site/create'),
+                                        array('label' => '查看订单','icon'=>'time', 'url' => '/ballwang/order/admin'),
                                         array('label' => '销售统计','icon'=>'tag', 'url' => '#'),
                                         array('label' => '分析统计','icon'=>'check',   'url' => '#'),
                                         '---',

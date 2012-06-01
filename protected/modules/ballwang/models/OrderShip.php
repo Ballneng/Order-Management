@@ -1,9 +1,9 @@
 <?php
 
 /**
- * This is the model class for table "{{order_ship}}".
+ * This is the model class for table "{{OrderShip}}".
  *
- * The followings are the available columns in table '{{order_ship}}':
+ * The followings are the available columns in table '{{OrderShip}}':
  * @property integer $ship_id
  * @property integer $ship_order_id
  * @property string $ship_start_at
@@ -17,7 +17,6 @@ class OrderShip extends CActiveRecord
 {
 	/**
 	 * Returns the static model of the specified AR class.
-	 * @param string $className active record class name.
 	 * @return OrderShip the static model class
 	 */
 	public static function model($className=__CLASS__)
@@ -41,7 +40,7 @@ class OrderShip extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ship_order_id, ship_start_at, ship_end_at, ship_to, ship_create_at', 'required'),
+			array('ship_order_id, ship_start_at, ship_end_at, ship_to', 'required'),
 			array('ship_order_id, ship_to', 'numerical', 'integerOnly'=>true),
 			array('ship_from, ship_code', 'length', 'max'=>32),
 			// The following rule is used by search().
@@ -90,16 +89,31 @@ class OrderShip extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('ship_id',$this->ship_id);
+
 		$criteria->compare('ship_order_id',$this->ship_order_id);
+
 		$criteria->compare('ship_start_at',$this->ship_start_at,true);
+
 		$criteria->compare('ship_end_at',$this->ship_end_at,true);
+
 		$criteria->compare('ship_from',$this->ship_from,true);
+
 		$criteria->compare('ship_to',$this->ship_to);
+
 		$criteria->compare('ship_code',$this->ship_code,true);
+
 		$criteria->compare('ship_create_at',$this->ship_create_at,true);
 
-		return new CActiveDataProvider($this, array(
+		return new CActiveDataProvider('OrderShip', array(
 			'criteria'=>$criteria,
 		));
 	}
+
+    public function trackUrl($shippingNumber,$carrierUrl)
+    {
+        if (!$shippingNumber || !$carrierUrl)
+            return;
+
+        return str_replace('@', $shippingNumber, $carrierUrl);
+    }
 }

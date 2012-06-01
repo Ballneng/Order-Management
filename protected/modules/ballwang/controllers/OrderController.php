@@ -47,9 +47,54 @@ class OrderController extends BallController {
      * @param integer $id the ID of the model to be displayed
      */
     public function actionView($id) {
-        $this->render('view', array(
-            'model' => $this->loadModel($id),
-        ));
+ 
+        $model = $this->_load_model();
+        if (!$ship = OrderShip::model()->findByAttributes(array('ship_order_id' => $model->order_id))) {
+            $ship = new OrderShip();
+        }
+
+        if (isset($_POST['Order'])) {
+            $model->order_status = $_POST['Order']['order_status'];
+            if ($model->order_status == Order::Shipped) {
+                $day = Config::item('ship', 'cycle');
+                $ship->ship_order_id = $model->order_id;
+                $ship->ship_start_at = date('Y-m-d H:i:s');
+                $ship->ship_end_at = date('Y-m-d H:i:s', strtotime("+$day day"));
+                $ship->ship_from = 'China';
+                $ship->ship_to = $model->order_address_id;
+                $ship->ship_code = str_replace(' ', '', $_POST['OrderShip']['ship_code']);
+
+                if ($ship->save()) {
+                    $model->order_ship_id = $ship->ship_id;
+                }
+            }
+
+            if ($model->order_status == Order::PaymentAccepted) {
+                $model->order_export = 0;
+            }
+
+            $model->save(false);
+
+            if (!$history = OrderHistory::model()->findByAttributes(array('history_order_id' => $model->order_id))) {
+                $history = new OrderHistory();
+            }
+            $history->history_employee_id = Yii::app()->user->id;
+            $history->history_order_id = $model->order_id;
+            $history->history_state = $model->order_status;
+            $history->history_create = new CDbExpression("NOW()");
+            $history->save();
+            $history->informEmail($model->customer_id);
+        }
+
+        $script = "$('#order_status').change(function(){
+                     if($(this).val()==3){
+                         $('#ship_code').show();
+                      }else{
+                          $('#ship_code').hide();
+                      }
+                 });";
+        Yii::app()->clientScript->registerScript('ship_code', $script, CClientScript::POS_READY);
+        $this->render('view', array('model' => $model, 'ship' => $ship));
     }
 
     /**
@@ -232,11 +277,15 @@ class OrderController extends BallController {
         if ($isOrder) {
             $order = $isOrder;
             $custmerId = (int) $row['customer_id'];
+            $order->order_status=$row['order_status'];
+            $order->order_ship_id=$roew['order_ship_id'];
             $order->order_valid = $row['order_valid'];
             $order->order_export = $row['order_export'];
             $order->order_create_at = $row['order_create_at'];
             if ($order->update()) {
                 
+            }  else {
+                var_dump($order->errors);
             }
         } else {
             $order = new Order();
@@ -422,5 +471,17 @@ class OrderController extends BallController {
         $return['userId'] = $userId;
         return $return;
     }
+    
+    
+    private function _load_model() {
+        if (isset($_GET['id'])) {
+            $model = Order::model()->findByPk($_GET['id']);
+        }
+        if ($model == null) {
+            throw new CHttpException(404, "The requested page does not exist!");
+        }
+        return $model;
+    }
+    
 
 }
